@@ -9,9 +9,9 @@ letter <- read.csv("letter", header = FALSE)
 tanBayes(titanic.raw)
 data = titanic.raw
 data$Survived <- NULL
-tanBayes_experimental.default(data, titanic.raw$Survived, 0.1)
+tanBayes.default(data, titanic.raw$Survived, 0.1)
 
 tanBayes(letter, 1)
 data = letter
 data$V1 <- NULL
-tanBayes_experimental.default(data, letter$V1, 0.1)
+tanBayes.default(data, letter$V1, 0.1)
