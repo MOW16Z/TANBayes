@@ -1,3 +1,3 @@
-source("packages.R")
-source("data.R")
-source("evaluate.R")
+source("R/packages.R")
+source("R/data.R")
+source("R/evaluate.R")
