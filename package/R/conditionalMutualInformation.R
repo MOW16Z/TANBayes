@@ -8,8 +8,6 @@
 #'    Laplace smoothing parameter
 #' @return
 #'    Returns table containing conditional mutial information between each attribute
-#' @export
-#' @examples
 cmitable <- function(x, y) {
 
     # cmi between two attributes given in indexes variable

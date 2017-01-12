@@ -68,7 +68,7 @@ runTest <- function(data) {
 results <- list()
 
 # functional test
-results[["tdata"]] <- runTest(prepData(titanicData))
+results[["tdata"]] <- runTest(prepData(tdata))
 
 # run N times, each time randomly partition data into training/test
 for(i in 1:1) {

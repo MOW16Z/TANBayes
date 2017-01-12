@@ -1,3 +1,4 @@
+#' @export
 tanBayes = function(data, ...)
   UseMethod("tanBayes")
 
@@ -7,11 +8,9 @@ tanBayes = function(data, ...)
 #' @param y Class vector
 #' @param laplace Laplace smoothing parameter
 #' @param ... Not used
-#'
 #' @return tanBayes object
+#' 
 #' @export
-#'
-#' @examples
 tanBayes.default <- function(x, y, laplace = 0, ...) {
     call <- match.call()
     Yname <- deparse(substitute(y))
@@ -62,6 +61,15 @@ tanBayes.default <- function(x, y, laplace = 0, ...) {
 }
 
 
+#' TAN Bayes Classifier
+#'
+#' @param formula Formula object
+#' @param data Input data
+#' @param laplace Laplace smoothing parameter
+#' @param ... not used
+#' @return tanBayes object
+#' 
+#' @export
 tanBayes.formula <- function(formula, data, laplace = 0, ...,
                                subset, na.action = na.pass) {
   call <- match.call()
@@ -85,6 +93,7 @@ tanBayes.formula <- function(formula, data, laplace = 0, ...,
 
 }
 
+#' @export
 print.tanBayes <- function(x, ...) {
   cat("\nTAN Bayes Classifier for Discrete Predictors\n\n")
   cat("Call:\n")
@@ -100,6 +109,15 @@ print.tanBayes <- function(x, ...) {
   }
 }
 
+#' Predict function for TAN Bayes
+#'
+#' @param object object of tanBayes class
+#' @param newdata Test data
+#' @param type not used
+#' @param threshold probability threshold applied to values not present in training data
+#' @param eps minimal probability to be relplaced with treshold
+#' 
+#' @export
 predict.tanBayes <- function(object, newdata, type = c("class", "raw"), threshold = 0.001, eps = 0, ...) {
 
     type <- match.arg(type)

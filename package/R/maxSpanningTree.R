@@ -5,8 +5,6 @@
 #'    Adjacency matrix containing weights
 #' @return
 #'    Adjacency matrix representing directed maximal spanning tree
-#' @export
-#' @examples
 maxSpanningTree <- function(table) {
 
     if (!requireNamespace("igraph", quietly = TRUE)) {
