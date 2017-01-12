@@ -2,6 +2,7 @@ library("e1071")
 library("rpart")
 library("RWeka")
 library("C50")
+library("TANBayes")
 
 # load data sets
 tdata = read.csv("data/test.txt", header = FALSE)
@@ -30,15 +31,18 @@ prepData <- function(data, splitRatio = 0.25) {
 }
 
 # runs all algorithms on given train/test data sets
-runTest <- function(data) {
+runTest <- function(data, laplace = 0.5) {
   timeTrain <- timeClassify <- error <- c()
 
   # run naive Bayes
-  timeTrain[["naiveBayes"]] <- measCPUTime(modB <- naiveBayes(Class ~ ., data$train))
+  timeTrain[["naiveBayes"]] <- measCPUTime(modB <- naiveBayes(Class ~ ., data$train, laplace = laplace))
   timeClassify[["naiveBayes"]] <- measCPUTime(resB <- predict(modB, data$test, type = "class"))
   error[["naiveBayes"]] <- sum(resB != data$test$Class) / nrow(data$test)
   
-  # TODO: TAN Bayes
+  # run TAN Bayes
+  timeTrain[["tanBayes"]] <- measCPUTime(modT <- tanBayes(Class ~ ., data$train, laplace = laplace))
+  timeClassify[["tanBayes"]] <- measCPUTime(resT <- predict(modT, data$test, type = "class"))
+  error[["tanBayes"]] <- sum(resT != data$test$Class) / nrow(data$test)
   
   # run rpart
   timeTrain[["rpart"]] <- measCPUTime(modR <- rpart(Class ~ ., data$train, method = "class"))
