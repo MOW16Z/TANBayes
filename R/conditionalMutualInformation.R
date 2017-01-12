@@ -1,55 +1,66 @@
-#conditional mutual information
-cmitable <- function(x, y, laplace){
+#' Conditional mutual information table
+#'
+#' @param x
+#'    Input data
+#' @param y
+#'    Class vector of the same length as data
+#' @param laplace
+#'    Laplace smoothing parameter
+#' @return
+#'    Returns table containing conditional mutial information between each attribute
+#' @export
+#' @examples
+cmitable <- function(x, y) {
 
-  #cmi between two attributes given in indexes variable
-  cmi <- function(indexes, x, y, laplace){
-    # attr1 and attr2 contingency tables with class vector y
-    Ai = table(x[,indexes[1]],y)
-    Aj = table(x[,indexes[2]],y)
-    # conditional probabilities of Ai given class y
-    # with laplace smoothing
-    PAi = t((t(Ai)+laplace)/(colSums(Ai)+laplace*apply(Ai,2,function(v){nlevels(as.factor(v))})))
-    # convert to matrix
-    PAi = matrix(as.numeric(unlist(PAi)),nrow=nrow(PAi))
-    # conditional probabilities of Aj given class y
-    # with laplace smoothing
-    PAj = t((t(Aj)+laplace)/(colSums(Aj)+laplace*apply(Aj,2,function(v){nlevels(as.factor(v))})))
-    # convert to matrix
-    PAj = matrix(as.numeric(unlist(PAj)),nrow=nrow(PAj))
+    # cmi between two attributes given in indexes variable
+    cmi <- function(indexes, x, y) {
+        # attr1 and attr2 contingency tables with class vector y
+        Ai = table(x[, indexes[1]], y)
+        Aj = table(x[, indexes[2]], y)
+        # conditional probabilities of Ai given class y
+        PAi = t(t(Ai)/colSums(Ai))
+        # convert to matrix
+        PAi = matrix(as.numeric(unlist(PAi)), nrow = nrow(PAi))
 
-    # 2D table of PAi|c * PAj|c with class values as column
-    PAij_mul <- mapply(outer, as.data.frame(PAi), as.data.frame(PAj))
+        # conditional probabilities of Aj given class y
+        PAj = t(t(Aj)/colSums(Aj))
+        # convert to matrix
+        PAj = matrix(as.numeric(unlist(PAj)), nrow = nrow(PAj))
 
-    # 3D contingency table of Ai, Aj and class vector
-    Aijc <- table(x[,indexes[1]], x[,indexes[2]], y)
 
-    # divide each element by sum of all elements (with smoothing)
-    # corresponds to P(Ai, Aj, c)
-    PAijc <- sweep(Aijc+laplace, 1, margin.table(Aijc)+laplace*nlevels(as.factor(Aijc)), "/")
-    # # without smoothing it would be just:
-    # PAijc <- prop.table(Aijc)
+        PAj[is.nan(PAj)] <- 0
+        PAi[is.nan(PAi)] <- 0
 
-    # reshape table to flatten it to 2D
-    dim(PAijc) <- c(nrow(PAi)*nrow(PAj), ncol(PAi))
+        # 2D table of PAi|c * PAj|c with class values as column
+        PAij_mul <- mapply(outer, as.data.frame(PAi), as.data.frame(PAj))
 
-    # same as with PAijc but divides by sums over 3-rd dimension (which is class)
-    # this corresponds to P(Ai, Aj|c)
-    PAij_cond <- sweep(Aijc+laplace, 3, margin.table(Aijc, 3)+laplace*nlevels(as.factor(Aijc)), "/")
-    # reashape
-    dim(PAij_cond) <- c(nrow(PAi)*nrow(PAj), ncol(PAi))
+        # 3D contingency table of Ai, Aj and class vector
+        Aijc <- table(x[, indexes[1]], x[, indexes[2]], y)
 
-    s <- PAijc * log(PAij_cond / PAij_mul)
-    sum(s)
-  }
+        # divide each element by sum of all elements corresponds to P(Ai, Aj, c)
+        PAijc <- sweep(Aijc, 1, margin.table(Aijc), "/")
+        # # without smoothing it would be just: PAijc <- prop.table(Aijc)
 
-  # table containing all attribute combinations indexes
-  attrCombinations <- combn(length(x),2)
+        # reshape table to flatten it to 2D
+        dim(PAijc) <- c(nrow(PAi) * nrow(PAj), ncol(PAi))
 
-  table <- matrix(0, ncol(x), ncol(x))
-  for(i in 1:ncol(attrCombinations)){
-    k = attrCombinations[,i]
-    table[k[1], k[2]] <- cmi(k,x, y, laplace)
-  }
-  table[lower.tri(table)] <- t(table[upper.tri(table)])
-  table
+        # same as with PAijc but divides by sums over 3-rd dimension (which is class) this corresponds to P(Ai, Aj|c)
+        PAij_cond <- sweep(Aijc, 3, margin.table(Aijc, 3), "/")
+        # reashape
+        dim(PAij_cond) <- c(nrow(PAi) * nrow(PAj), ncol(PAi))
+
+        s <- PAijc * log(PAij_cond/PAij_mul)
+        s[is.nan(s)] <- 0
+        sum(s)
+    }
+
+    # table containing all attribute combinations indexes
+    attrCombinations <- combn(length(x), 2)
+    table <- matrix(0, nrow=ncol(x), ncol=ncol(x))
+    for (i in 1:ncol(attrCombinations)) {
+        k = attrCombinations[, i]
+        table[k[1], k[2]] <- cmi(k, x, y)
+    }
+    table <- table + t(table)
+    table
 }

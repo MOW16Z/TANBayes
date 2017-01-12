@@ -1,3 +1,4 @@
+devtools::install("package") #install TANBayes
 # install missing packages
 packageNames = c("rpart", "e1071", "C50", "RWeka")
 

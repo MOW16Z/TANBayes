@@ -1,26 +1,81 @@
 library(e1071)
+library(TANBayes)
 chess = read.csv("./data/Chess/kr-vs-kp.data", header = FALSE)
 tdata = read.csv("./data/test.txt", header = FALSE)
 download.file('http://www.rdatamining.com/data/titanic.raw.rdata','titanic.raw.rdata')
 load('titanic.raw.rdata')
 
-download.file("https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data", "letter")
-letter <- read.csv("letter", header = FALSE)
+names(tdata)[4] <- "Class" # rename class column
+levels(tdata$V2) <- c("c", "d")
+levels(tdata$V3) <- c("e", "f")
+
+chessData = read.csv("data/kr-vs-kp.data", header = FALSE)
+names(chessData)[37] <- "Class" # rename class column
+
+letterData = read.csv("data/letter", header = FALSE)
+names(letterData)[1] <- "Class" # rename class column
+
+irisData <- iris
+irisData$Sepal.Length <- as.factor(irisData$Sepal.Length)
+irisData$Sepal.Width <- as.factor(irisData$Sepal.Width)
+irisData$Petal.Length <- as.factor(irisData$Petal.Length)
+irisData$Petal.Width <- as.factor(irisData$Petal.Width)
+names(irisData)[5] <- "Class" # rename class column
+
+titanicData = titanic.raw
+names(titanicData)[1] <- "c" # rename Class to sth else
+names(titanicData)[4] <- "Class" # rename class column
 
 
-data = letter
-set.seed(1235)
-sam <- sample(2, nrow(data), replace=TRUE, prob=c(0.7, 0.3))
-trainData <- data[sam==1,]
-testData <- data[sam==2,]
-tb <-tanBayes.default(trainData[,-1], trainData[,1], 0.1)
-nbClasif <- naiveBayes(trainData[,-1], trainData[,1], 0.1)
-testPred <- predict(nbClasif, testData[,-1])
-table(testData$V1,testPred)
+# helper function to measure CPU time
+measCPUTime <- function(expr) {
+  time <- system.time(expr, gcFirst = TRUE)
+  return(time[1] + time[2])
+}
 
-tantestPred <- predict(tb, testData[,-1])
-table(testData$V1,tantestPred)
+# prepare data for use by algorithms
+prepData <- function(data, splitRatio = 0.25) {
+  # convert class column to factor (if not factor already)
+  data$Class <- as.factor(data$Class)
 
+  # split data randomly: (1-splitRatio) -> train, splitRatio -> test
+  randomSplit <- runif(nrow(data))
+  return(list(train = data[randomSplit >= splitRatio,], test = data[randomSplit < splitRatio,]))
+}
+tanm <- 1
+nbm <- 1
+# runs all algorithms on given train/test data sets
+runTest <- function(data) {
+  timeTrain <- timeClassify <- error <- c()
+
+  # run naive Bayes
+  timeTrain[["naiveBayes"]] <- measCPUTime(modB <- naiveBayes(Class ~ ., data$train))
+  nbm <<- modB
+  timeClassify[["naiveBayes"]] <- measCPUTime(resB <- predict(modB, data$test, type = "class"))
+  error[["naiveBayes"]] <- sum(resB != data$test$Class) / nrow(data$test)
+  print(table(data$test$Class, resB))
+  # TODO: TAN Bayes
+  timeTrain[["tanBayes"]] <- measCPUTime(modT <- tanBayes(Class ~ ., data$train))
+  tanm<<-modT
+  timeClassify[["tanBayes"]] <- measCPUTime(resT <- predict(modT, data$test, type = "class"))
+  error[["tanBayes"]] <- sum(resT != data$test$Class) / nrow(data$test)
+  print(table(data$test$Class, resT))
+  return(data.frame(timeTrain, timeClassify, error))
+}
+
+
+# place for test results
+results <- list()
+
+# functional test
+results[["tdata"]] <- runTest(prepData(titanicData))
+
+# run N times, each time randomly partition data into training/test
+for(i in 1:1) {
+  results[[paste0("chess",i)]] <- runTest(prepData(chessData))
+  #results[[paste0("letter",i)]] <- runTest(prepData(letterData))
+}
+print(results)
 
 #MIARA JAKOŚCI - F-MIARA:
 fMeasure <- function(cm){
