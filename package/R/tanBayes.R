@@ -101,12 +101,11 @@ print.tanBayes <- function(x, ...) {
   cat("\nA-priori probabilities:\n")
   print(x$classProb)
   cat("\nConditional probabilities:\n")
-  for (i in x$tables) {print(i); cat("\n")
+  for (i in x$tables) {print(i); cat("\n")}
   cat("\nConditional mutual information table:\n")
   print(x$cmitable)
   cat("\nMaximal spanning tree:\n")
   print(x$mst)
-  }
 }
 
 #' Predict function for TAN Bayes
