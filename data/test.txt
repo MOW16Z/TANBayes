@@ -3,11 +3,11 @@ a,a,a,1
 a,a,a,1
 a,a,b,0
 a,a,b,0
-a,b,a,1
-a,b,a,1
-a,b,a,1
-a,b,b,0
-a,b,b,0
+a,b,a,0
+a,b,a,0
+a,b,a,0
+a,b,b,1
+a,b,b,1
 b,a,a,0
 b,a,a,0
 b,a,b,0
