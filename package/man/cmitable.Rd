@@ -2,7 +2,7 @@
 % Please edit documentation in R/conditionalMutualInformation.R
 \name{cmitable}
 \alias{cmitable}
-\title{Conditional mutual information table}
+\title{Conditional mutual information}
 \usage{
 cmitable(x, y)
 }
@@ -10,12 +10,13 @@ cmitable(x, y)
 \item{x}{Input data}
 
 \item{y}{Class vector of the same length as data}
-
-\item{laplace}{Laplace smoothing parameter}
 }
 \value{
-Returns table containing conditional mutial information between each attribute
+Returns table containing conditional mutual information
+   calculated for each pair of attributes
 }
 \description{
-Conditional mutual information table
+Calculates conditional mutual information
+for each pair of dataset attributes
 }
+

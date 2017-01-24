@@ -1,14 +1,26 @@
-#' @export
-tanBayes = function(data, ...)
-  UseMethod("tanBayes")
-
 #' TAN Bayes Classifier
 #'
-#' @param x Input data
-#' @param y Class vector
-#' @param laplace Laplace smoothing parameter
-#' @param ... Not used
-#' @return tanBayes object
+#' @description Builds Tree-Augmented-Naive Bayes model from data
+#' using calculated conditional mutual information matrix.
+#'   
+#' @param laplace Laplace smoothing parameter. Default value (0) disables smoothing.
+#' @param ... Not used.
+#' @return An object of class \code{tanBayes}.
+#' 
+#' @examples
+#' data(iris)
+#' model <- tanBayes(Species ~ ., data = iris)
+#' table(predict(model, iris), iris$Species)
+#' 
+#' @export
+tanBayes = function(x, ...)
+  UseMethod("tanBayes")
+
+#' @describeIn tanBayes TAN Bayes Classifier
+#'
+#' @param x Input data (a numeric matrix or a data frame of 
+#' categorical and/or numeric variables).
+#' @param y Class vector.
 #' 
 #' @export
 tanBayes.default <- function(x, y, laplace = 0, ...) {
@@ -61,13 +73,18 @@ tanBayes.default <- function(x, y, laplace = 0, ...) {
 }
 
 
-#' TAN Bayes Classifier
+#' @describeIn tanBayes TAN Bayes Classifier
 #'
-#' @param formula Formula object
-#' @param data Input data
-#' @param laplace Laplace smoothing parameter
-#' @param ... not used
-#' @return tanBayes object
+#' @param formula A formula of the form \code{class ~ x1 + x2 +
+#' \dots}. Interactions are not allowed.
+#' @param data Input data (a data frame of categorical and/or numeric variables).
+#' @param subset Currently not used.
+#' @param na.action A function to specify the action to be taken if \code{NA}s are
+#' found. The default action is not to count them for the
+#' computation of the probability factors. An
+#' alternative is na.omit, which leads to rejection of cases
+#' with missing values on any required variable. (NOTE: If
+#' given, this argument must be named.)
 #' 
 #' @export
 tanBayes.formula <- function(formula, data, laplace = 0, ...,
@@ -108,13 +125,14 @@ print.tanBayes <- function(x, ...) {
   print(x$mst)
 }
 
-#' Predict function for TAN Bayes
+#' @describeIn tanBayes Predict function for TAN Bayes
 #'
-#' @param object object of tanBayes class
-#' @param newdata Test data
-#' @param type not used
-#' @param threshold probability threshold applied to values not present in training data
-#' @param eps minimal probability to be relplaced with treshold
+#' @param object An object of class \code{tanBayes}.
+#' @param newdata Test data.
+#' @param type Currently not used.
+#' @param threshold Value replacing cells with probabilities within \code{eps} range.
+#' @param eps A double for specifying an epsilon-range to apply Laplace
+#' smoothing (to replace zero or close-zero probabilities by \code{theshold}).
 #' 
 #' @export
 predict.tanBayes <- function(object, newdata, type = c("class", "raw"), threshold = 0.001, eps = 0, ...) {

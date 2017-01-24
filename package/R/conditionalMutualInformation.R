@@ -1,13 +1,15 @@
-#' Conditional mutual information table
+#' Conditional mutual information
+#'
+#' @description Calculates conditional mutual information
+#' for each pair of dataset attributes
 #'
 #' @param x
 #'    Input data
 #' @param y
 #'    Class vector of the same length as data
-#' @param laplace
-#'    Laplace smoothing parameter
 #' @return
-#'    Returns table containing conditional mutial information between each attribute
+#'    Returns table containing conditional mutual information
+#'    calculated for each pair of attributes
 cmitable <- function(x, y) {
 
     # cmi between two attributes given in indexes variable

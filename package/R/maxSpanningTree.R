@@ -1,5 +1,8 @@
-#' Returns directed maximal spanning tree
-#' as adjacency matrix
+#' Maximum Spanning Tree
+#' 
+#' @description Builds directed maximum (weight) spanning tree
+#' on an undirected weigted graph described by an adjacency matrix.
+#' Root node in resulting tree is always node number 1.
 #'
 #' @param table
 #'    Adjacency matrix containing weights

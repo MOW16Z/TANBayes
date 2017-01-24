@@ -2,8 +2,7 @@
 % Please edit documentation in R/maxSpanningTree.R
 \name{maxSpanningTree}
 \alias{maxSpanningTree}
-\title{Returns directed maximal spanning tree
-as adjacency matrix}
+\title{Maximum Spanning Tree}
 \usage{
 maxSpanningTree(table)
 }
@@ -14,6 +13,8 @@ maxSpanningTree(table)
 Adjacency matrix representing directed maximal spanning tree
 }
 \description{
-Returns directed maximal spanning tree
-as adjacency matrix
+Builds directed maximum (weight) spanning tree
+on an undirected weigted graph described by an adjacency matrix.
+Root node in resulting tree is always node number 1.
 }
+
