@@ -52,16 +52,17 @@ plotVs <- function(res, alg1, alg2) {
 es <- filterValuesByType(res = results, type = "error")
 esAvg <- averageValuesByDataset(es)
 
-print(round(esAvg * 100, digits = 2)) # in % and nicely rounded
+print(t(round(esAvg * 100, digits = 2))) # in % and nicely rounded
 
 plotVs(es, "tanBayes", "naiveBayes")
 plotVs(es, "tanBayes", "tan-bnlearn")
 plotVs(es, "tanBayes", "tanBayes-1")
 plotVs(es, "tanBayes", "rpart")
 plotVs(es, "tanBayes", "C5.0")
+plotVs(es, "naiveBayes", "naiveBayes-0.1")
 
-print(round(averageValuesByDataset(filterValuesByType(res = results, type = "timeTrain")), digits = 2))
-print(round(averageValuesByDataset(filterValuesByType(res = results, type = "timeClassify")), digits = 2))
+print(t(round(averageValuesByDataset(filterValuesByType(res = results, type = "timeTrain")), digits = 2)))
+print(t(round(averageValuesByDataset(filterValuesByType(res = results, type = "timeClassify")), digits = 2)))
 
 ### scratchpad ###
 # b = cbind(results$tdata["error"], results$chess["error"])

@@ -112,7 +112,7 @@ results <- list()
 # run tests partitioning data into training/test
 results[["chess"]] <- runTest(prepData(chessData))
 results[["letter"]] <- runTest(prepData(letterData))
-#results[["adult"]] <- runTest(prepData(adultData))
+results[["adult"]] <- runTest(prepData(adultData))
 #results[["gisette"]] <- runTest(prepData(gisetteData))
 
 print(results)
